@@ -485,7 +485,7 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
       switch (playbackStatus) {
         case PlaybackState.play:
           _removeNextHold();
-          if (_currentVideoDuration != null) {
+          if (_currentStoryItemDuration != null) {
             _beginPlay();
           }
           this._animationController?.forward();
@@ -528,10 +528,10 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
     }
   }
 
-  Duration? _currentVideoDuration;
+  Duration? _currentStoryItemDuration;
 
-  void setCurrentVideoDuration(Duration duration) {
-    _currentVideoDuration = duration;
+  void setCurrentStoryItemDuration(Duration duration) {
+    _currentStoryItemDuration = duration;
   }
 
   void _play() {
@@ -548,11 +548,11 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
     }
 
     _animationController = AnimationController(
-      duration: _currentVideoDuration ?? storyItem.duration,
+      duration: _currentStoryItemDuration ?? storyItem.duration,
       vsync: this,
     );
 
-    _currentVideoDuration = null;
+    _currentStoryItemDuration = null;
 
     _animationController!.addStatusListener((status) {
       if (status == AnimationStatus.completed) {

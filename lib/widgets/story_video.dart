@@ -121,7 +121,7 @@ class StoryVideoState extends State<StoryVideo> {
 
   void _updateDuration(Duration duration) {
     final state = context.findAncestorStateOfType<StoryViewState>();
-    state?.setCurrentVideoDuration(duration);
+    state?.setCurrentStoryItemDuration(duration);
   }
 
   Widget getContentView() {
