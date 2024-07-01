@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:story_view/widgets/story_view.dart';
 import 'package:video_player/video_player.dart';
 
 import '../utils.dart';
@@ -25,8 +25,10 @@ class VideoLoader {
       onComplete();
     }
 
-    final fileStream = DefaultCacheManager()
-        .getFileStream(this.url, headers: this.requestHeaders as Map<String, String>?);
+    final fileStream = DefaultCacheManager().getFileStream(
+      this.url,
+      headers: this.requestHeaders as Map<String, String>?,
+    );
 
     fileStream.listen((fileResponse) {
       if (fileResponse is FileInfo) {
@@ -46,14 +48,16 @@ class StoryVideo extends StatefulWidget {
   final Widget? loadingWidget;
   final Widget? errorWidget;
 
-  StoryVideo(this.videoLoader, {
+  StoryVideo(
+    this.videoLoader, {
     Key? key,
     this.storyController,
     this.loadingWidget,
     this.errorWidget,
   }) : super(key: key ?? UniqueKey());
 
-  static StoryVideo url(String url, {
+  static StoryVideo url(
+    String url, {
     StoryController? controller,
     Map<String, dynamic>? requestHeaders,
     Key? key,
@@ -95,6 +99,7 @@ class StoryVideoState extends State<StoryVideo> {
 
         playerController!.initialize().then((v) {
           setState(() {});
+          _updateDuration(playerController!.value.duration);
           widget.storyController!.play();
         });
 
@@ -114,6 +119,11 @@ class StoryVideoState extends State<StoryVideo> {
     });
   }
 
+  void _updateDuration(Duration duration) {
+    final state = context.findAncestorStateOfType<StoryViewState>();
+    state?.setCurrentVideoDuration(duration);
+  }
+
   Widget getContentView() {
     if (widget.videoLoader.state == LoadState.success &&
         playerController!.value.isInitialized) {
@@ -127,22 +137,24 @@ class StoryVideoState extends State<StoryVideo> {
 
     return widget.videoLoader.state == LoadState.loading
         ? Center(
-            child: widget.loadingWidget?? Container(
-              width: 70,
-              height: 70,
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                strokeWidth: 3,
-              ),
-            ),
+            child: widget.loadingWidget ??
+                Container(
+                  width: 70,
+                  height: 70,
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    strokeWidth: 3,
+                  ),
+                ),
           )
         : Center(
-            child: widget.errorWidget?? Text(
-            "Media failed to load.",
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ));
+            child: widget.errorWidget ??
+                Text(
+                  "Media failed to load.",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ));
   }
 
   @override
